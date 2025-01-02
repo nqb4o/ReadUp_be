@@ -11,10 +11,10 @@ class User {
         return rows[0];
     };
 
-    static async createUser(name, email, passwordHash) {
+    static async createUser(name, email, passwordHash, role = 'user') {
         const [result] = await db.query(
-            "INSERT INTO users (name, email, password_hash) VALUES (?, ?, ?)",
-            [name, email, passwordHash]
+            "INSERT INTO users (name, email, password_hash, role) VALUES (?, ?, ?, ?)",
+            [name, email, passwordHash, role]
         );
         return result.insertId;
     }

@@ -21,9 +21,8 @@ exports.loginUser = async (req, res) => {
             return res.status(400).json({ message: "Email hoặc mật khẩu không đúng." });
         }
 
-        // Tạo token
         const token = jwt.sign(
-            { id: user.id, email: user.email },
+            { id: user.id, email: user.email, role: user.role },
             process.env.JWT_SECRET,
             { expiresIn: "1h" }
         );
@@ -35,6 +34,7 @@ exports.loginUser = async (req, res) => {
                 id: user.id,
                 name: user.name,
                 email: user.email,
+                role: user.role
             },
         });
     } catch (err) {
@@ -61,6 +61,9 @@ exports.registerUser = async (req, res) => {
         const saltRounds = 10;
         const passwordHash = await bcrypt.hash(password, saltRounds);
 
+        // Chỉ admin mới có thể đăng ký tài khoản với vai trò admin
+        const userRole = req.user?.role === "admin" && role === "admin" ? "admin" : "user";
+
         // Tạo người dùng mới
         const userId = await User.createUser(name, email, passwordHash);
 
@@ -73,7 +76,7 @@ exports.registerUser = async (req, res) => {
         res.status(201).json({
             message: "Đăng ký thành công.",
             token,
-            user: { id: userId, name, email },
+            user: { id: userId, name, email, role: userRole },
         });
     } catch (err) {
         console.error(err);
@@ -98,6 +101,7 @@ exports.getUserProfile = async (req, res) => {
             id: user.id,
             name: user.name,
             email: user.email,
+            role: user.role,
             created_at: user.created_at,
         });
     } catch (err) {
@@ -197,7 +201,7 @@ exports.googleLogin = async (req, res) => {
         res.status(201).json({
             message: "Đăng nhập thành công.",
             accessToken: appAccessToken,
-            user: { id: userId, name, email },
+            user: { id: userId, name, email, role: user.role },
         });
     } catch (err) {
         console.error("Lỗi trong quá trình đăng nhập:", err.message);
