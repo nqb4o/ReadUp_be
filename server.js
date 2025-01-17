@@ -5,12 +5,14 @@ const { parseJson, handleCors } = require("./src/middleware/index");
 const app = express();
 
 // Sử dụng middleware
-app.use(parseJson);
 app.use(handleCors);
+app.use(parseJson);
 
 const authRoutes = require('./src/routes/authRoutes');
-
 app.use("/api/auth", authRoutes);
+
+const bookRoutes = require('./src/routes/bookRoutes')
+app.use('/api/book', bookRoutes)
 
 const port = process.env.PORT;
 const hostname = process.env.HOST_NAME;
