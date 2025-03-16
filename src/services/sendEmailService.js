@@ -18,7 +18,7 @@ exports.sendEmailService = async (user) => {
     });
 
     const info = await transporter.sendMail({
-        from: '"nBrain" <nguyenbaoctntn@gmail.com>',
+        from: '"ReadUp" <nguyenbaoctntn@gmail.com>',
         to: user.email,
         subject: 'Reset your password',
         html: `
