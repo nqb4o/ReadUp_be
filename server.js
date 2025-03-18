@@ -11,8 +11,8 @@ app.use(parseJson);
 const authRoutes = require('./src/routes/authRoutes');
 app.use("/api/auth", authRoutes);
 
-const bookRoutes = require('./src/routes/bookRoutes')
-app.use('/api/book', bookRoutes)
+const aritcleRoutes = require('./src/routes/articleRoutes')
+app.use('/api/article', aritcleRoutes)
 
 const port = process.env.PORT;
 const hostname = process.env.HOST_NAME;
