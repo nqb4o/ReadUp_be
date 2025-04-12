@@ -20,9 +20,9 @@ const upload = multer({ storage: storage });
 router.post("/query", chatbotController.processQuery);
 
 // Protected endpoint for document uploads
-router.post("/upload", 
-  authMiddleware, 
-  upload.single('document'), 
+router.post("/upload",
+  authMiddleware,
+  upload.single('document'),
   chatbotController.uploadDocument
 );
 

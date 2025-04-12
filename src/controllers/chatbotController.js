@@ -1,11 +1,11 @@
-const RAGChatbot = require("../../ragChatbot");
+const RAGChatbot = require("../services/ragChatbot");
 const path = require("path");
 
 class ChatbotController {
   constructor() {
     this.chatbot = new RAGChatbot(process.env.COHERE_API_KEY);
     this.initialized = false;
-    
+
     // Initialize the chatbot when the controller is created
     this.initializeChatbot();
   }
@@ -27,7 +27,7 @@ class ChatbotController {
 
     try {
       const { question } = req.body;
-      
+
       if (!question) {
         return res.status(400).json({ error: "Question is required" });
       }
@@ -58,10 +58,10 @@ class ChatbotController {
 
       const filePath = path.join(__dirname, '../../uploads', req.file.filename);
       await this.chatbot.loadDocuments(filePath);
-      
+
       // Optionally save the vector store for future use
       await this.chatbot.saveVectorStore("faiss_store");
-      
+
       res.json({ message: "Document processed successfully" });
     } catch (error) {
       console.error("Document processing error:", error);
