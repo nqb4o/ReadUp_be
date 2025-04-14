@@ -71,19 +71,61 @@ class RAGChatbot {
   }
 
   async loadArticleContent(articleContent) {
+    // Kiểm tra đầu vào
+    if (!articleContent || typeof articleContent !== "string") {
+      throw new Error("Invalid article content provided");
+    }
+
+    // Đảm bảo articleContent là string
+    const content = articleContent.toString().trim();
+
+    if (content.length === 0) {
+      throw new Error("Empty article content provided");
+    }
+
+    console.log(`Processing article content (${content.length} characters)`);
+
     const textSplitter = new RecursiveCharacterTextSplitter({
       chunkSize: 1000,
       chunkOverlap: 200,
     });
-    const docs = await textSplitter.splitDocuments([{ pageContent: articleContent }]);
 
-    // Sử dụng FAISS để lưu trữ vector
-    this.vectorStore = await FaissStore.fromDocuments(docs, this.embeddings);
+    try {
+      // Tạo document từ text đầu vào
+      const docs = await textSplitter.splitText(content);
 
-    this.chain = RetrievalQAChain.fromLLM(this.llm, this.vectorStore.asRetriever(), {
-      prompt: this.teacherPrompt,
-      returnSourceDocuments: true,
-    });
+      // Chuyển đổi các chunk text thành documents với pageContent
+      const documents = docs.map(text => ({
+        pageContent: text,
+        metadata: { source: "user-provided-content" }
+      }));
+
+      console.log(`Split into ${documents.length} chunks`);
+
+      // Tạo vector store từ documents
+      this.vectorStore = await FaissStore.fromDocuments(
+        documents,
+        this.embeddings
+      );
+
+      // Tạo retrieval chain
+      this.chain = RetrievalQAChain.fromLLM(
+        this.llm,
+        this.vectorStore.asRetriever(),
+        {
+          prompt: this.teacherPrompt,
+          returnSourceDocuments: true,
+        }
+      );
+
+      return {
+        success: true,
+        chunkCount: documents.length
+      };
+    } catch (error) {
+      console.error("Error processing article content:", error);
+      throw new Error(`Failed to process content: ${error.message}`);
+    }
   }
 }
 
