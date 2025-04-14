@@ -26,8 +26,11 @@ app.use('/api/article', articleRoutes);
 const chatbotRoutes = require('./src/routes/chatbotRoutes');
 app.use('/api/chatbot', chatbotRoutes);
 
+const vocabularyRoutes = require("./src/routes/VocabularyRoutes");
+app.use('/api/vocabulary', vocabularyRoutes);
+
 const port = process.env.PORT;
 const hostname = process.env.HOST_NAME;
 app.listen(port, hostname, () => {
-    console.log(`Server listening on port ${port}`);
+  console.log(`Server listening on port ${port}`);
 });

@@ -26,4 +26,6 @@ router.post("/upload",
   chatbotController.uploadDocument
 );
 
+router.post("/initialize-with-article", chatbotController.initializeWithArticle);
+
 module.exports = router;

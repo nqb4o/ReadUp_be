@@ -46,7 +46,7 @@ class RAGChatbot {
 
     // Using FAISS instead of HNSWLib
     this.vectorStore = await FaissStore.fromDocuments(docs, this.embeddings);
-    
+
     this.chain = RetrievalQAChain.fromLLM(this.llm, this.vectorStore.asRetriever(), {
       prompt: this.teacherPrompt,
       returnSourceDocuments: true,
@@ -67,6 +67,22 @@ class RAGChatbot {
     this.vectorStore = await FaissStore.load(path, this.embeddings);
     this.chain = RetrievalQAChain.fromLLM(this.llm, this.vectorStore.asRetriever(), {
       prompt: this.teacherPrompt,
+    });
+  }
+
+  async loadArticleContent(articleContent) {
+    const textSplitter = new RecursiveCharacterTextSplitter({
+      chunkSize: 1000,
+      chunkOverlap: 200,
+    });
+    const docs = await textSplitter.splitDocuments([{ pageContent: articleContent }]);
+
+    // Sử dụng FAISS để lưu trữ vector
+    this.vectorStore = await FaissStore.fromDocuments(docs, this.embeddings);
+
+    this.chain = RetrievalQAChain.fromLLM(this.llm, this.vectorStore.asRetriever(), {
+      prompt: this.teacherPrompt,
+      returnSourceDocuments: true,
     });
   }
 }
