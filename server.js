@@ -29,6 +29,12 @@ app.use('/api/chatbot', chatbotRoutes);
 const vocabularyRoutes = require("./src/routes/VocabularyRoutes");
 app.use('/api/vocabulary', vocabularyRoutes);
 
+const userRoutes = require("./src/routes/userRoutes");
+app.use("/api/users", userRoutes);
+
+const quizRoutes = require("./src/routes/quizRoutes");
+app.use("/api/quiz", quizRoutes);
+
 const port = process.env.PORT;
 const hostname = process.env.HOST_NAME;
 app.listen(port, hostname, () => {

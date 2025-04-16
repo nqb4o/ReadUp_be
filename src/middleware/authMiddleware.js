@@ -15,3 +15,10 @@ exports.authMiddleware = (req, res, next) => {
         return res.status(401).json({ message: "Token không hợp lệ." });
     }
 };
+
+exports.adminMiddleware = (req, res, next) => {
+    if (req.user.role !== 'admin') {
+        return res.status(403).json({ message: 'Access denied. Admins only.' });
+    }
+    next();
+};
