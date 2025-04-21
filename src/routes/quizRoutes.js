@@ -1,6 +1,6 @@
 const express = require("express");
 const quizController = require("../controllers/quizController");
-const { authMiddleware } = require("../middleware/authMiddleware");
+const { authMiddleware, adminMiddleware } = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
@@ -15,5 +15,13 @@ router.get("/history/:user_id", authMiddleware, quizController.getQuizHistory);
 
 // Lấy chi tiết bài quiz
 router.get("/attempt/:attempt_id", authMiddleware, quizController.getQuizAttemptDetails);
+
+router.get("/", authMiddleware, adminMiddleware, quizController.getAllQuizQuestions); // Lấy tất cả câu hỏi
+
+router.post("/", authMiddleware, adminMiddleware, quizController.createQuizQuestion); // Thêm mới
+
+router.put("/:id", authMiddleware, adminMiddleware, quizController.updateQuizQuestion); // Sửa
+
+router.delete("/:id", authMiddleware, adminMiddleware, quizController.deleteQuizQuestion); // Xóa
 
 module.exports = router;

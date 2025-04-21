@@ -68,7 +68,7 @@ exports.registerUser = async (req, res) => {
         const userId = await User.createUser(name, email, passwordHash);
 
         // Tạo token JWT
-        const token = jwt.sign({ id: userId, email }, process.env.JWT_SECRET, {
+        const token = jwt.sign({ id: userId, email, role: "user" }, process.env.JWT_SECRET, {
             expiresIn: "1h",
         });
 
@@ -193,7 +193,7 @@ exports.googleLogin = async (req, res) => {
         }
 
         const appAccessToken = jwt.sign(
-            { id: userId, email },
+            { id: userId, email, role: user.role },
             process.env.JWT_SECRET,
             { expiresIn: "1h" }
         );

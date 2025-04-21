@@ -23,8 +23,7 @@ exports.getArticleById = async (req, res) => {
 
 exports.createArticle = async (req, res) => {
     try {
-        const { title, content, tags } = req.body;
-        const image = req.file ? `/uploads/${req.file.filename}` : null; // Lấy đường dẫn ảnh
+        const { title, content, image_url } = req.body;
 
         if (!title || !content) {
             return res.status(400).json({
@@ -32,7 +31,7 @@ exports.createArticle = async (req, res) => {
             });
         }
 
-        const newArticle = await Article.createArticle({ title, content, image, tags: JSON.parse(tags || '[]') });
+        const newArticle = await Article.createArticle({ title, content, image_url });
         res.status(201).json(newArticle);
     } catch (error) {
         if (error.code === '23505') {
@@ -47,8 +46,7 @@ exports.createArticle = async (req, res) => {
 exports.updateArticle = async (req, res) => {
     try {
         const { id } = req.params;
-        const { title, content, tags } = req.body;
-        const image = req.file ? `/uploads/${req.file.filename}` : null; // Lấy đường dẫn ảnh
+        const { title, content, image_url } = req.body; // Lấy link ảnh từ body
 
         if (!title || !content) {
             return res.status(400).json({
@@ -56,7 +54,7 @@ exports.updateArticle = async (req, res) => {
             });
         }
 
-        const updatedArticle = await Article.updateArticle(id, { title, content, image, tags: JSON.parse(tags || '[]') });
+        const updatedArticle = await Article.updateArticle(id, { title, content, image_url });
 
         if (!updatedArticle) {
             return res.status(404).json({

@@ -1,6 +1,16 @@
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
 
+exports.getAllUsers = async (req, res) => {
+    try {
+        const users = await User.getAllUsers();
+        res.status(200).json(users);
+    } catch (error) {
+        console.error("Error fetching users:", error);
+        res.status(500).json({ message: "Internal server error." });
+    }
+}
+
 exports.createUser = async (req, res) => {
     try {
         const { name, email, password, role } = req.body;

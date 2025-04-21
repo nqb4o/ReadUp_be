@@ -23,6 +23,7 @@ class ChatbotController {
         return res.status(400).json({ error: "Article title and content are required" });
       }
 
+
       await this.chatbot.loadArticleContent(articleContent);
 
       console.log(`Chatbot initialized with article: ${articleTitle}`);

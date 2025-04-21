@@ -13,14 +13,14 @@ class Article {
     };
 
     static async createArticle(articleData) {
-        const { title, content, image, tags } = articleData;
+        const { title, content, image_url } = articleData;
         const id = uuidv4();
 
         // Thêm bài báo
         await db.query(
-            `INSERT INTO articles (id, title, content, image)
+            `INSERT INTO articles (id, title, content, image_url)
              VALUES (?, ?, ?, ?)`,
-            [id, title, content, image]
+            [id, title, content, image_url]
         );
 
         // Xử lý tags
@@ -36,15 +36,15 @@ class Article {
     }
 
     static async updateArticle(id, articleData) {
-        const { title, content, image, tags } = articleData;
+        const { title, content, image_url } = articleData;
 
         const result = await db.query(
             `UPDATE articles 
              SET title = ?, 
                  content = ?, 
-                 image = COALESCE(?, image) 
+                 image_url = COALESCE(?, image_url) 
              WHERE id = ?`,
-            [title, content, image, id]
+            [title, content, image_url, id]
         );
 
         if (result.affectedRows === 0) {
@@ -57,7 +57,7 @@ class Article {
         }
 
         const [updatedArticle] = await db.query(
-            `SELECT id, title, content, image
+            `SELECT id, title, content, image_url
              FROM articles
              WHERE id = ?`,
             [id]

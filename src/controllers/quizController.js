@@ -1,4 +1,5 @@
 const Quiz = require("../models/Quiz");
+const db = require("../config/db");
 
 class QuizController {
     // Lấy 10 câu hỏi ngẫu nhiên
@@ -31,7 +32,7 @@ class QuizController {
             for (const answer of answers) {
                 const question = await Quiz.getQuestionById(answer.question_id);
 
-                if (question?.correct_meaning === answer.selected_answer) {
+                if (question?.correct_answer === answer.selected_answer) {
                     correctAnswers++;
                 }
             }
@@ -41,7 +42,9 @@ class QuizController {
 
             // Lưu chi tiết từng câu hỏi
             for (const answer of answers) {
-                const isCorrect = answer.selected_answer === answer.correct_meaning;
+                // Lấy đáp án đúng từ DB để xác định đúng/sai
+                const question = await Quiz.getQuestionById(answer.question_id);
+                const isCorrect = answer.selected_answer === question.correct_answer;
                 await Quiz.saveQuizAttemptQuestion(attemptId, answer.question_id, answer.selected_answer, isCorrect);
             }
 
@@ -96,6 +99,55 @@ class QuizController {
             res.status(200).json(details);
         } catch (error) {
             console.error("Error fetching quiz attempt details:", error);
+            res.status(500).json({ error: "Internal server error" });
+        }
+    };
+
+    // Thêm câu hỏi quiz mới
+    createQuizQuestion = async (req, res) => {
+        try {
+            const { question, correct_answer, wrong1, wrong2, wrong3 } = req.body;
+            if (!question || !correct_answer || !wrong1 || !wrong2 || !wrong3) {
+                return res.status(400).json({ error: "Missing required fields" });
+            }
+            const [result] = await Quiz.createQuizQuestion({ question, correct_answer, wrong1, wrong2, wrong3 });
+            res.status(201).json({ id: result.insertId, message: "Quiz question created" });
+        } catch (error) {
+            res.status(500).json({ error: "Internal server error" });
+        }
+    };
+
+    // Sửa câu hỏi quiz
+    updateQuizQuestion = async (req, res) => {
+        try {
+            const { id } = req.params;
+            const { question, correct_answer, wrong1, wrong2, wrong3 } = req.body;
+            const [result] = await Quiz.updateQuizQuestion(id, { question, correct_answer, wrong1, wrong2, wrong3 });
+            if (result.affectedRows === 0) return res.status(404).json({ error: "Not found" });
+            res.json({ message: "Quiz question updated" });
+        } catch (error) {
+            res.status(500).json({ error: "Internal server error" });
+        }
+    };
+
+    // Xóa câu hỏi quiz
+    deleteQuizQuestion = async (req, res) => {
+        try {
+            const { id } = req.params;
+            const [result] = await Quiz.deleteQuizQuestion(id);
+            if (result.affectedRows === 0) return res.status(404).json({ error: "Not found" });
+            res.json({ message: "Quiz question deleted" });
+        } catch (error) {
+            res.status(500).json({ error: "Internal server error" });
+        }
+    };
+
+    // Lấy tất cả câu hỏi quiz (cho admin)
+    getAllQuizQuestions = async (req, res) => {
+        try {
+            const questions = await Quiz.getAllQuizQuestions();
+            res.json(questions);
+        } catch (error) {
             res.status(500).json({ error: "Internal server error" });
         }
     };
