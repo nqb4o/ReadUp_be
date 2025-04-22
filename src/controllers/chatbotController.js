@@ -26,7 +26,6 @@ class ChatbotController {
 
       await this.chatbot.loadArticleContent(articleContent);
 
-      console.log(`Chatbot initialized with article: ${articleTitle}`);
       res.json({ message: "Chatbot initialized with article content" });
     } catch (error) {
       console.error("Error initializing chatbot with article:", error);
@@ -39,7 +38,6 @@ class ChatbotController {
     try {
       await this.chatbot.initialize();
       this.initialized = true;
-      console.log("Chatbot initialized successfully");
     } catch (error) {
       console.error("Failed to initialize chatbot:", error);
     }

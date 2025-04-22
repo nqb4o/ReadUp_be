@@ -83,8 +83,6 @@ class RAGChatbot {
       throw new Error("Empty article content provided");
     }
 
-    console.log(`Processing article content (${content.length} characters)`);
-
     const textSplitter = new RecursiveCharacterTextSplitter({
       chunkSize: 1000,
       chunkOverlap: 200,
@@ -99,8 +97,6 @@ class RAGChatbot {
         pageContent: text,
         metadata: { source: "user-provided-content" }
       }));
-
-      console.log(`Split into ${documents.length} chunks`);
 
       // Tạo vector store từ documents
       this.vectorStore = await FaissStore.fromDocuments(
